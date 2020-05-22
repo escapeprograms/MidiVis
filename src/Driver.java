@@ -17,6 +17,11 @@ import javax.swing.WindowConstants;
 
 
 public class Driver extends JPanel implements ActionListener {
+	/*
+	THE ONLY AUTHOR OF THIS IS VISIONIST
+	Please do not steal or distribute
+	Thank you for coming to my Ted Talk
+	*/
 	ArrayList<Note> notes = new ArrayList<Note>();
 	ArrayList<Particle> particles = new ArrayList<Particle>();
 	/*Customizables*/
