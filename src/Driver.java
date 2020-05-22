@@ -20,7 +20,7 @@ public class Driver extends JPanel implements ActionListener {
 	ArrayList<Note> notes = new ArrayList<Note>();
 	ArrayList<Particle> particles = new ArrayList<Particle>();
 	/*Customizables*/
-	String song = "Winter Wind x Megalovania.mid";
+	String song = "test.mid";
     Key[] keys = new Key[120];
 	double scale = 10;
 	int xshift = -27;
@@ -45,7 +45,7 @@ public class Driver extends JPanel implements ActionListener {
 		g.setColor(new Color(255, colorflux, colorflux));
 		
 		g.setFont(new Font("Comic Sans MS", 0, 20));
-		g.drawString("\""+song.substring(0,song.length()-4)+"\" by Visionist", 10, 600);
+		g.drawString("\""+song.substring(0,song.length()-4)+"\" by _______", 10, 600);
 		g.drawString("Midi Visualizer by Visionist", 10, 625);
 		
 		//draw notes
