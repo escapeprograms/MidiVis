@@ -13,7 +13,6 @@ import javax.sound.midi.Track;
 public class ParseMidi {
     public static final int NOTE_ON = 0x90;
     public static final int NOTE_OFF = 0x80;
-    public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
     public static void createParse (String pathname, Key[] keys, long[] len) throws Exception  {
         Sequence sequence = MidiSystem.getSequence(new File(pathname));
@@ -39,23 +38,15 @@ public class ParseMidi {
                     //System.out.print("Channel: " + sm.getChannel() + " ");
                     if (sm.getCommand() == NOTE_ON) {
                         int key = sm.getData1();
-                        int octave = (key / 12)-1;
-                        int note = key % 12;
-                        String noteName = NOTE_NAMES[note];
                         int velocity = sm.getData2();
                         //System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-                        //my stuff
-                        keys[key].addStart(tick);
+                        keys[key].addStart(tick, velocity);
                         if (key>highestKey) highestKey=key;
                         if (key<lowestKey) lowestKey=key;
                     } else if (sm.getCommand() == NOTE_OFF) {
                         int key = sm.getData1();
-                        int octave = (key / 12)-1;
-                        int note = key % 12;
-                        String noteName = NOTE_NAMES[note];
                         int velocity = sm.getData2();
                         //System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-                        //my stuff
                         keys[key].addStop(tick);
                     } else {
                         //System.out.println("Command:" + sm.getCommand());

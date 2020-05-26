@@ -17,40 +17,39 @@ import javax.swing.WindowConstants;
 
 
 public class Driver extends JPanel implements ActionListener {
-	/*
-	THE ONLY AUTHOR OF THIS IS VISIONIST
-	Please do not steal or distribute
-	Thank you for coming to my Ted Talk
-	*/
 	ArrayList<Note> notes = new ArrayList<Note>();
 	ArrayList<Particle> particles = new ArrayList<Particle>();
 	/*Customizables*/
-	String song = "test.mid";
+	String song = "songname.mid";
     Key[] keys = new Key[120];
 	double scale = 10;
 	int xshift = -27;
     int span = 100-27;
-    float y=-1500;
+    float y=-100;
     int bpm = 140;
     int fps = 30;
+    
     boolean flash = true;
-    boolean particlespawn = true;
+    boolean particlespawn = false;
+    boolean backgroundcolor = true;
+    
     /*                 */
     
     boolean ready = true;
     int colorflux = 255;
+    int backflux = 0;
     double tickpersec = 0;
     long[] len = {0,0};
 	
 	@Override
 	public void paint(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(new Color(0,0,0));
+		g.setColor(new Color(0,backflux/4,0));//<-- COLOR CUSTOMIZATION
 		g.fillRect(0, 0, 1200, 1200);
-		g.setColor(new Color(255, colorflux, colorflux));
+		g.setColor(new Color(colorflux, 255, colorflux));//<-- COLOR CUSTOMIZATION
 		
 		g.setFont(new Font("Comic Sans MS", 0, 20));
-		g.drawString("\""+song.substring(0,song.length()-4)+"\" by _______", 10, 600);
+		g.drawString("\""+song.substring(0,song.length()-4)+"\" by Visionist", 10, 600);
 		g.drawString("Midi Visualizer by Visionist", 10, 625);
 		
 		//draw notes
@@ -64,16 +63,19 @@ public class Driver extends JPanel implements ActionListener {
 				//active notes
 				if (ready) {ready = false;playSound();}
 				g.fillRect((n.key+xshift)*(1200/span), yval, (1200/span), 500-yval);
+
 				//first frame
 				if (yval+n.length/scale<510) {
 					//flash
-					if (flash&&n.length>tickpersec*0.3) colorflux = (int) (255*(1-n.length/(1.5*tickpersec)));
+					if (flash&&n.length>tickpersec*0.3) colorflux = 0;
 					//particle spawn
 					if (particlespawn) {
 						for (int x = 0; x < 5; x++) {
 							particles.add(new Particle((n.key+xshift)*(1200/span),500));
 						}
 					}
+					//background flash
+					if (n.vol>100&&n.length>tickpersec*0.3) {backflux = n.vol*2;}
 				}
 			}else {
 				//falling notes
@@ -100,14 +102,19 @@ public class Driver extends JPanel implements ActionListener {
 		//System.out.println("length "+len[0]);
 		if (len[1] > 0) {
 			//System.out.println(y);
-			double lagCompensation = 1.026;
+			double lagCompensation = 1.026;//<-- DELAY CUSTOMIZATION
 			y += lagCompensation*tickpersec/(fps*scale);//1.026 to compensate lag
 		}
 		
 		//color
-		if (colorflux<255) colorflux+=15;
+		if (colorflux<255) colorflux+=30;
 		if (colorflux>255) colorflux = 255;
 		if (colorflux<0) colorflux = 0;
+		
+		//background color
+		if (backflux>0) backflux-=10;
+		if (backflux>255) backflux = 255;
+		if (backflux<0) backflux = 0;
 		
 		//particles
 		for (int i = 0; i < particles.size(); i++) {
@@ -154,7 +161,7 @@ public class Driver extends JPanel implements ActionListener {
         
         for (int i = 0; i < keys.length; i++) {
         	for (int j = 0; j < keys[i].starts.size(); j++) {
-        		notes.add(new Note(i,keys[i].starts.get(j),keys[i].stops.get(j)));
+        		notes.add(new Note(i,keys[i].starts.get(j),keys[i].stops.get(j),keys[i].vols.get(j)));
         	}
         }
         for (int i = 0; i < 1000; i++) {
@@ -170,7 +177,7 @@ public class Driver extends JPanel implements ActionListener {
 	
 	public void playSound() {
 	    try {
-	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("Winter Wind x Megalovania.wav").getAbsoluteFile());
+	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(song.substring(0,song.length()-4)+".wav").getAbsoluteFile());
 	        Clip clip = AudioSystem.getClip();
 	        clip.open(audioInputStream);
 	        clip.start();
