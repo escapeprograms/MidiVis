@@ -20,7 +20,7 @@ public class Driver extends JPanel implements ActionListener {
 	ArrayList<Note> notes = new ArrayList<Note>();
 	ArrayList<Particle> particles = new ArrayList<Particle>();
 	/*Customizables*/
-	String song = "Pandemic.mid";
+	String song = "song.mid";
     Key[] keys = new Key[120];
 	double scale = 10;
 	int xshift = -27;
