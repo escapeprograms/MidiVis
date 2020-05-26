@@ -20,7 +20,7 @@ public class Driver extends JPanel implements ActionListener {
 	ArrayList<Note> notes = new ArrayList<Note>();
 	ArrayList<Particle> particles = new ArrayList<Particle>();
 	/*Customizables*/
-	String song = "songname.mid";
+	String song = "Pandemic.mid";
     Key[] keys = new Key[120];
 	double scale = 10;
 	int xshift = -27;
@@ -28,10 +28,12 @@ public class Driver extends JPanel implements ActionListener {
     float y=-100;
     int bpm = 140;
     int fps = 30;
+    int roundR = 6;//rounded corners
     
     boolean flash = true;
     boolean particlespawn = false;
     boolean backgroundcolor = true;
+    boolean roundmode = true;
     
     /*                 */
     
@@ -44,10 +46,22 @@ public class Driver extends JPanel implements ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(new Color(0,backflux/4,0));//<-- COLOR CUSTOMIZATION
+		//background
+		g.setColor(new Color(0,0,0));//<-- COLOR CUSTOMIZATION
 		g.fillRect(0, 0, 1200, 1200);
-		g.setColor(new Color(colorflux, 255, colorflux));//<-- COLOR CUSTOMIZATION
 		
+		//border
+		if (backflux>0) {
+			int starti = 0;
+			for (int i = starti; i < 475; i+=20) {
+				int c = (int)(backflux*(i-starti)/(475-starti));
+				g.setColor(new Color(0,c,0));//<-- COLOR CUSTOMIZATION
+				g.drawOval(-10-i/2, -i/2*9/16, 1200+i, 675+i*9/16);
+			}
+		}
+		
+		g.setColor(new Color(colorflux, 255, colorflux));//<-- COLOR CUSTOMIZATION
+		//text
 		g.setFont(new Font("Comic Sans MS", 0, 20));
 		g.drawString("\""+song.substring(0,song.length()-4)+"\" by Visionist", 10, 600);
 		g.drawString("Midi Visualizer by Visionist", 10, 625);
@@ -62,8 +76,11 @@ public class Driver extends JPanel implements ActionListener {
 			if (yval+n.length/scale>500) {
 				//active notes
 				if (ready) {ready = false;playSound();}
-				g.fillRect((n.key+xshift)*(1200/span), yval, (1200/span), 500-yval);
-
+				//draw the notes
+				if (!roundmode)
+					g.fillRect((n.key+xshift)*(1200/span), yval, (1200/span), 500-yval);
+				else
+					g.fillRoundRect((n.key+xshift)*(1200/span), yval, (1200/span), 500-yval, roundR, roundR);
 				//first frame
 				if (yval+n.length/scale<510) {
 					//flash
@@ -79,12 +96,16 @@ public class Driver extends JPanel implements ActionListener {
 				}
 			}else {
 				//falling notes
-				g.drawRect((n.key+xshift)*(1200/span), yval, (1200/span), (int)(n.length/scale));
+				if (!roundmode)
+					g.drawRect((n.key+xshift)*(1200/span), yval, (1200/span), (int)(n.length/scale));
+				else
+					g.drawRoundRect((n.key+xshift)*(1200/span), yval, (1200/span), (int)(n.length/scale), roundR, roundR);
 			}
 		}
 		
 		//barrier
 		g.drawLine(0, 500, 1200, 500);
+		
 		
 		//particles
 		for (int i = 0; i < particles.size(); i++) {
